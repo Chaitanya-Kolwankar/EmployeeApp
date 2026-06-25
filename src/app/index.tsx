@@ -1,3 +1,4 @@
+import { SymbolView } from "expo-symbols";
 import { useState } from "react";
 import {
   Alert,
@@ -12,7 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SymbolView } from "expo-symbols";
+import Header from "../components/Header";
 
 // Mock data for our employee list
 const INITIAL_EMPLOYEES = [
@@ -122,7 +123,11 @@ export default function EmployeeListScreen() {
           onPress={() => handleCall(item.name)}
           activeOpacity={0.7}
         >
-          <SymbolView name={{ ios: 'phone', android: 'phone', web: 'phone' }} size={18} tintColor="#0066cc" />
+          <SymbolView
+            name={{ ios: "phone", android: "phone", web: "phone" }}
+            size={18}
+            tintColor="#0066cc"
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -130,7 +135,11 @@ export default function EmployeeListScreen() {
           onPress={() => handleDelete(item.id, item.name)}
           activeOpacity={0.7}
         >
-          <SymbolView name={{ ios: 'trash', android: 'delete', web: 'delete' }} size={18} tintColor="#cc0000" />
+          <SymbolView
+            name={{ ios: "trash", android: "delete", web: "delete" }}
+            size={18}
+            tintColor="#cc0000"
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -141,10 +150,14 @@ export default function EmployeeListScreen() {
       <StatusBar barStyle="dark-content" backgroundColor="#f4f7f6" />
 
       {/* Header Section */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Team Directory</Text>
-        <Text style={styles.headerSubtitle}>{employees.length} Members</Text>
-      </View>
+      <Header
+        title="Team Directory"
+        subtitle={`${employees.length} Members`}
+        actionIcon={{ ios: "plus", android: "add", web: "add" }}
+        onActionPress={() =>
+          Alert.alert("Add Employee", "Add new employee action")
+        }
+      />
 
       {/* Horizontal ScrollView for Filters */}
       <View style={styles.filtersContainer}>
