@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -11,12 +12,12 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../components/Header";
-import EmployeeCard from "../components/EmployeeCard";
-import { DEPARTMENTS, INITIAL_EMPLOYEES } from "../data/mockData";
-
+import EmployeeCard from "../../components/EmployeeCard";
+import Header from "../../components/Header";
+import { DEPARTMENTS, INITIAL_EMPLOYEES } from "../../data/mockData";
 
 export default function EmployeeListScreen() {
+  const router = useRouter();
   const [employees, setEmployees] = useState(INITIAL_EMPLOYEES);
   const [activeTab, setActiveTab] = useState("All");
 
@@ -38,8 +39,6 @@ export default function EmployeeListScreen() {
       },
     ]);
   };
-
-
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
@@ -94,6 +93,7 @@ export default function EmployeeListScreen() {
             employee={item}
             onCall={handleCall}
             onDelete={handleDelete}
+            onPress={() => router.push(`/employee/${item.id}`)}
           />
         )}
         contentContainerStyle={styles.listContent}

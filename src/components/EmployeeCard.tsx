@@ -6,11 +6,12 @@ type EmployeeCardProps = {
   employee: Employee;
   onCall: (name: string) => void;
   onDelete: (id: string, name: string) => void;
+  onPress: () => void;
 };
 
-export default function EmployeeCard({ employee, onCall, onDelete }: EmployeeCardProps) {
+export default function EmployeeCard({ employee, onCall, onDelete, onPress }: EmployeeCardProps) {
   return (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
       {/* Employee Avatar */}
       <Image source={{ uri: employee.avatar }} style={styles.avatar} />
 
@@ -46,7 +47,7 @@ export default function EmployeeCard({ employee, onCall, onDelete }: EmployeeCar
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
