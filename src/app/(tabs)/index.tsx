@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
   Alert,
   FlatList,
-  Platform,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -114,23 +113,6 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "#f4f7f6", // Light grayish-blue background
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: Platform.OS === "android" ? 20 : 10,
-    paddingBottom: 20,
-  },
-  headerTitle: {
-    fontSize: 32,
-    fontWeight: "800",
-    color: "#111827",
-    letterSpacing: 0.5,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: "#6b7280",
-    marginTop: 4,
-    fontWeight: "500",
   },
   filtersContainer: {
     marginBottom: 10,
