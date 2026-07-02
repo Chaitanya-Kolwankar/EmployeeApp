@@ -1,5 +1,6 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SymbolView } from "expo-symbols";
+import { Skeleton } from "moti/skeleton";
 import { Employee } from "../types";
 
 type EmployeeCardProps = {
@@ -11,41 +12,57 @@ type EmployeeCardProps = {
 
 export default function EmployeeCard({ employee, onCall, onDelete, onPress }: EmployeeCardProps) {
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8} disabled={!employee.name}>
       {/* Employee Avatar */}
-      <Image source={{ uri: employee.avatar }} style={styles.avatar} />
+      <Skeleton colorMode="light" radius="round" height={64} width={64}>
+        {employee.avatar ? <Image source={{ uri: employee.avatar }} style={styles.avatar} /> : <View style={styles.avatar} />}
+      </Skeleton>
 
       {/* Employee Info */}
       <View style={styles.cardInfo}>
-        <Text style={styles.name}>{employee.name}</Text>
-        <Text style={styles.role}>{employee.role}</Text>
+        <View style={{ marginBottom: 4 }}>
+          <Skeleton colorMode="light" height={20} width={120}>
+            {employee.name ? <Text style={styles.name}>{employee.name}</Text> : null}
+          </Skeleton>
+        </View>
+        <Skeleton colorMode="light" height={16} width={80}>
+          {employee.role ? <Text style={styles.role}>{employee.role}</Text> : null}
+        </Skeleton>
       </View>
 
       {/* Actions (Call & Delete) */}
       <View style={styles.actions}>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.callButton]}
-          onPress={() => onCall(employee.name)}
-          activeOpacity={0.7}
-        >
-          <SymbolView
-            name={{ ios: "phone", android: "phone", web: "phone" }}
-            size={18}
-            tintColor="#0066cc"
-          />
-        </TouchableOpacity>
+        <Skeleton colorMode="light" radius="round" height={40} width={40}>
+          {employee.name ? (
+            <TouchableOpacity
+              style={[styles.actionButton, styles.callButton]}
+              onPress={() => onCall(employee.name)}
+              activeOpacity={0.7}
+            >
+              <SymbolView
+                name={{ ios: "phone", android: "phone", web: "phone" }}
+                size={18}
+                tintColor="#0066cc"
+              />
+            </TouchableOpacity>
+          ) : <View style={[styles.actionButton, styles.callButton]} />}
+        </Skeleton>
 
-        <TouchableOpacity
-          style={[styles.actionButton, styles.deleteButton]}
-          onPress={() => onDelete(employee.id, employee.name)}
-          activeOpacity={0.7}
-        >
-          <SymbolView
-            name={{ ios: "trash", android: "delete", web: "delete" }}
-            size={18}
-            tintColor="#cc0000"
-          />
-        </TouchableOpacity>
+        <Skeleton colorMode="light" radius="round" height={40} width={40}>
+          {employee.name ? (
+            <TouchableOpacity
+              style={[styles.actionButton, styles.deleteButton]}
+              onPress={() => onDelete(employee.id, employee.name)}
+              activeOpacity={0.7}
+            >
+              <SymbolView
+                name={{ ios: "trash", android: "delete", web: "delete" }}
+                size={18}
+                tintColor="#cc0000"
+              />
+            </TouchableOpacity>
+          ) : <View style={[styles.actionButton, styles.deleteButton]} />}
+        </Skeleton>
       </View>
     </TouchableOpacity>
   );

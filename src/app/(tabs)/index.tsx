@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { Skeleton } from "moti/skeleton";
+import { useEffect, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -13,12 +14,32 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmployeeCard from "../../components/EmployeeCard";
 import Header from "../../components/Header";
-import { DEPARTMENTS, INITIAL_EMPLOYEES } from "../../data/mockData";
+import { DEPARTMENTS } from "../../data/mockData";
+import { fetchEmployees } from "../../services/employeeService";
+import { Employee } from "../../types";
 
 export default function EmployeeListScreen() {
   const router = useRouter();
-  const [employees, setEmployees] = useState(INITIAL_EMPLOYEES);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("All");
+
+  useEffect(() => {
+    async function loadEmployees() {
+      try {
+        const data = await fetchEmployees();
+        setEmployees(data);
+        setError(null);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch employees");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadEmployees();
+  }, []);
 
   // Handle Call Action
   const handleCall = (name: string) => {
@@ -84,26 +105,34 @@ export default function EmployeeListScreen() {
       </View>
 
       {/* Vertical FlatList for Employee List */}
-      <FlatList
-        data={employees}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <EmployeeCard
-            employee={item}
-            onCall={handleCall}
-            onDelete={handleDelete}
-            onPress={() => router.push(`/employee/${item.id}`)}
-          />
-        )}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        // Empty state when all employees are deleted
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No employees found.</Text>
-          </View>
-        }
-      />
+      <Skeleton.Group show={isLoading}>
+        <FlatList
+          data={
+            isLoading
+              ? Array.from({ length: 6 }).map(
+                  (_, index) => ({ id: `dummy-${index}` }) as Employee,
+                )
+              : employees
+          }
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <EmployeeCard
+              employee={item}
+              onCall={handleCall}
+              onDelete={handleDelete}
+              onPress={() => router.push(`/employee/${item.id}`)}
+            />
+          )}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          // Empty state when all employees are deleted
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No employees found.</Text>
+            </View>
+          }
+        />
+      </Skeleton.Group>
     </SafeAreaView>
   );
 }

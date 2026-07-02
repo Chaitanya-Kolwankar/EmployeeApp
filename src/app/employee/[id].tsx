@@ -1,16 +1,42 @@
 import { useLocalSearchParams } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { INITIAL_EMPLOYEES } from "../../data/mockData";
-
+import { Skeleton } from "moti/skeleton";
+import { useState, useEffect } from "react";
+import { fetchEmployeeById } from "../../services/employeeService";
+import { Employee } from "../../types";
 export default function EmployeeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  // Fetch the employee matching this `id`.
-  // Note: We fall back to the static mock data because the state in index.tsx
-  // is local to that screen.
-  const employee = INITIAL_EMPLOYEES.find((emp) => emp.id === id);
+  const [employee, setEmployee] = useState<Employee | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!employee) {
+  useEffect(() => {
+    async function loadEmployee() {
+      if (!id) return;
+      try {
+        const data = await fetchEmployeeById(id);
+        setEmployee(data);
+        setError(null);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch employee");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadEmployee();
+  }, [id]);
+
+  if (error) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  if (!isLoading && !employee) {
     return (
       <View style={styles.center}>
         <Text style={styles.errorText}>Employee not found.</Text>
@@ -18,12 +44,26 @@ export default function EmployeeDetailScreen() {
     );
   }
 
+  const displayEmployee = employee || { name: '', role: '', avatar: '' } as Employee;
+
   return (
-    <View style={styles.container}>
-      <Image source={{ uri: employee.avatar }} style={styles.avatar} />
-      <Text style={styles.name}>{employee.name}</Text>
-      <Text style={styles.role}>{employee.role}</Text>
-    </View>
+    <Skeleton.Group show={isLoading}>
+      <View style={styles.container}>
+        <View style={{ marginBottom: 24 }}>
+          <Skeleton colorMode="light" radius="round" height={140} width={140}>
+            {displayEmployee.avatar ? <Image source={{ uri: displayEmployee.avatar }} style={styles.avatar} /> : <View style={styles.avatar} />}
+          </Skeleton>
+        </View>
+        <View style={{ marginBottom: 8 }}>
+          <Skeleton colorMode="light" height={32} width={200}>
+            {displayEmployee.name ? <Text style={styles.name}>{displayEmployee.name}</Text> : null}
+          </Skeleton>
+        </View>
+        <Skeleton colorMode="light" height={24} width={150}>
+          {displayEmployee.role ? <Text style={styles.role}>{displayEmployee.role}</Text> : null}
+        </Skeleton>
+      </View>
+    </Skeleton.Group>
   );
 }
 
