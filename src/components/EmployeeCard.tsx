@@ -25,8 +25,8 @@ export default function EmployeeCard({ employee, onCall, onDelete, onPress }: Em
             {employee.name ? <Text style={styles.name}>{employee.name}</Text> : null}
           </Skeleton>
         </View>
-        <Skeleton colorMode="light" height={16} width={80}>
-          {employee.role ? <Text style={styles.role}>{employee.role}</Text> : null}
+        <Skeleton colorMode="light" height={16} width={150}>
+          {employee.department ? <Text style={styles.role}>{employee.role} • {employee.department}</Text> : null}
         </Skeleton>
       </View>
 

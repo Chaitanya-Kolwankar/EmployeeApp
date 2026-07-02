@@ -60,6 +60,11 @@ export default function EmployeeListScreen() {
     ]);
   };
 
+  const filteredEmployees =
+    activeTab === "All"
+      ? employees
+      : employees.filter((emp) => emp.department === activeTab);
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
       <StatusBar barStyle="dark-content" backgroundColor="#f4f7f6" />
@@ -67,7 +72,7 @@ export default function EmployeeListScreen() {
       {/* Header Section */}
       <Header
         title="Team Directory"
-        subtitle={`${employees.length} Members`}
+        subtitle={`${filteredEmployees.length} Members`}
         actionIcon={{ ios: "plus", android: "add", web: "add" }}
         onActionPress={() =>
           Alert.alert("Add Employee", "Add new employee action")
@@ -112,7 +117,7 @@ export default function EmployeeListScreen() {
               ? Array.from({ length: 6 }).map(
                   (_, index) => ({ id: `dummy-${index}` }) as Employee,
                 )
-              : employees
+              : filteredEmployees
           }
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
